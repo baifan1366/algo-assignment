@@ -105,19 +105,19 @@ Source analyzed: `C:\Users\weixu\Downloads\CCP6214_Assignment.pdf` extracted int
 
 ## 8. Hash Table Search TODO
 
-- [ ] Implement `hash_table_search dataset_n.csv`.
-- [ ] Search by integer field, not string field.
-- [ ] Decide hash table design that matches assignment text:
+- [X] Implement `hash_table_search dataset_n.csv`.
+- [X] Search by integer field, not string field.
+- [X] Decide hash table design that matches assignment text:
   - Direct bucket match if no collision.
   - Collision bucket represented with AVL balanced binary search tree.
-- [ ] Implement AVL tree manually, without library tree containers.
-- [ ] Implement hash function and collision strategy.
-- [ ] For timing, perform `n` searches where `n` is the dataset size because one search is too fast.
-- [ ] Measure best case, average case, and worst case.
-- [ ] Output file must be named like `hash_table_search_dataset_n.txt`.
-- [ ] Output must list running times for best, average, and worst cases.
-- [ ] Print running times to command prompt.
-- [ ] Ensure timing excludes input reading and output writing.
+- [X] Implement AVL tree manually, without library tree containers.
+- [X] Implement hash function and collision strategy.
+- [X] For timing, perform `n` searches where `n` is the dataset size because one search is too fast.
+- [X] Measure best case, average case, and worst case.
+- [X] Output file must be named like `hash_table_search_dataset_n.txt`.
+- [X] Output must list running times for best, average, and worst cases.
+- [X] Print running times to command prompt.
+- [X] Ensure timing excludes input reading and output writing.
 - [ ] Add theoretical time complexity and space complexity explanation to report.
 - [ ] Compare theoretically:
   - Hash table search with array-based AVL balanced BST collision buckets.
@@ -127,14 +127,14 @@ Source analyzed: `C:\Users\weixu\Downloads\CCP6214_Assignment.pdf` extracted int
 
 ## 9. Hash Table Search Step TODO
 
-- [ ] Implement `hash_table_search_step dataset_n.csv target`.
-- [ ] Tutor may specify one found target and one not-found target.
-- [ ] Output file must be named like `dataset_1000_hash_table_search_step_target.txt`.
-- [ ] Show search path:
+- [X] Implement `hash_table_search_step dataset_n.csv target`.
+- [X] Tutor may specify one found target and one not-found target.
+- [X] Output file must be named like `dataset_1000_hash_table_search_step_target.txt`.
+- [X] Show search path:
   - Direct bucket match path when found directly.
   - AVL/tree comparison path when collision bucket is used.
   - Not-found path with compared values and final `-1 != target` style result.
-- [ ] Match PDF sample style:
+- [X] Match PDF sample style:
   - Found: `2008864030 = 2008864030/rdiea`
   - Not found: `-1 != 123456789`
 
