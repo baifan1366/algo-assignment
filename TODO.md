@@ -67,12 +67,12 @@ Source analyzed: `C:\Users\weixu\Downloads\CCP6214_Assignment.pdf` extracted int
 
 ## 5. Radix Sort Step TODO
 
-- [ ] Implement `radix_sort_step dataset_n.csv start_row end_row`.
-- [ ] Extract only rows from `start_row` to `end_row` for step display.
-- [ ] Output file must be named like `dataset_1000_radix_sorted_step_startrow_endrow.txt`.
-- [ ] Print original selected records in bracket format.
-- [ ] Show each digit pass from rightmost to leftmost, labelled like `d=10`, `d=9`, ..., `d=1`.
-- [ ] Match sample style using `integer/string` display inside step output.
+- [x] Implement `radix_sort_step dataset_n.csv start_row end_row`.
+- [x] Extract only rows from `start_row` to `end_row` for step display.
+- [x] Output file must be named like `dataset_1000_radix_sorted_step_startrow_endrow.txt`.
+- [x] Print original selected records in bracket format.
+- [x] Show each digit pass from rightmost to leftmost, labelled like `d=10`, `d=9`, ..., `d=1`.
+- [x] Match sample style using `integer/string` display inside step output.
 - [ ] Verify with sample first 7 records from PDF.
 
 ## 6. Heap Sort TODO

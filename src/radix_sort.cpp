@@ -16,7 +16,7 @@
 // Member_4:
 // *********************************************************
 
-#include "common.hpp"
+#include "common.cpp"
 
 #include <array>
 #include <chrono>
@@ -64,7 +64,7 @@ void radix_sort_by_key(std::vector<Record>& records) {
 }
 
 std::string make_output_filename(const std::string& input_path) {
-    return "radix_sorted_dataset_" + dataset_size_from_filename(input_path) + ".txt";
+    return "radix_sorted_dataset_" + dataset_size_from_filename(input_path) + ".csv";
 }
 
 void write_radix_output(
@@ -83,10 +83,9 @@ void write_radix_output(
     output << "Number of records: " << records.size() << '\n';
     output << "Running time: " << std::fixed << std::setprecision(9)
            << elapsed_seconds << " seconds\n";
-    output << "Sorted records (integer,string):\n";
 
     for (const auto& record : records) {
-        output << record.key << ',' << record.value << '\n';
+        output << record.key << '/' << record.value << '\n';
     }
 }
 } // namespace

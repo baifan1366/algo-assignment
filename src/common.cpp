@@ -1,4 +1,4 @@
-#include "common.hpp"
+#include "../include/common.hpp"
 
 #include <fstream>
 #include <iostream>
