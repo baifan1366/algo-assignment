@@ -77,31 +77,31 @@ Source analyzed: `C:\Users\weixu\Downloads\CCP6214_Assignment.pdf` extracted int
 
 ## 6. Heap Sort TODO
 
-- [ ] Implement `heap_sort dataset_n.csv`.
-- [ ] Use maxheap.
-- [ ] Do not use `std::sort`, `priority_queue`, `set`, `map`, or other internally sorting/searching containers.
-- [ ] Sort by integer field, not string field.
-- [ ] Preserve `(integer,string)` records in sorted output.
-- [ ] Save sorted rows in comma CSV row format: `integer,string`.
-- [ ] Use slash format `integer/string` only for display/step outputs.
-- [ ] Output file should be `.txt` according to confirmed requirement, e.g. `heap_sorted_dataset_n.txt`.
-- [ ] Include all rows in sorted output.
-- [ ] Print running time to command prompt.
-- [ ] Write running time into the `.txt` output file.
-- [ ] Ensure timing excludes input file reading and output writing.
+- [x] Implement `heap_sort dataset_n.csv`.
+- [x] Use maxheap.
+- [x] Do not use `std::sort`, `priority_queue`, `set`, `map`, or other internally sorting/searching containers.
+- [x] Sort by integer field, not string field.
+- [x] Preserve `(integer,string)` records in sorted output.
+- [x] Save sorted records in assignment sample format: `integer/string`.
+- [x] Use slash format `integer/string` for sorted and step outputs.
+- [x] Output file is named like `heap_sorted_dataset_n.csv`, following the demo requirement.
+- [x] Include all rows in sorted output.
+- [x] Print running time to command prompt.
+- [x] Write running time into the output file.
+- [x] Ensure timing excludes input file reading and output writing.
 - [ ] Add theoretical time complexity and space complexity explanation to report.
 - [ ] Capture command prompt screenshot for every input size.
 - [ ] Add result table and chart for every member.
 
 ## 7. Heap Sort Step TODO
 
-- [ ] Implement `heap_sort_step dataset_n.csv start_row end_row`.
-- [ ] Extract only rows from `start_row` to `end_row` for step display.
-- [ ] Output file must be named like `dataset_1000_heap_sorted_step_startrow_endrow.txt`.
-- [ ] Build and display initial maxheap state.
-- [ ] Show each extraction/swap/heapify step labelled like `i = 6`, `i = 5`, etc.
-- [ ] Match sample style using `integer/string` display inside step output.
-- [ ] Verify with sample first 7 records from PDF.
+- [x] Implement `heap_sort_step dataset_n.csv start_row end_row`.
+- [x] Extract only rows from `start_row` to `end_row` for step display.
+- [x] Output file must be named like `dataset_1000_heap_sorted_step_startrow_endrow.txt`.
+- [x] Build and display initial maxheap state.
+- [x] Show each extraction/swap/heapify step labelled like `i = 6`, `i = 5`, etc.
+- [x] Match sample style using `integer/string` display inside step output.
+- [x] Verify with sample first 7 records from PDF.
 
 ## 8. Hash Table Search TODO
 

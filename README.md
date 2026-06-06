@@ -46,6 +46,25 @@ This writes `radix_sorted_dataset_1000.txt`, prints the running time in the term
 
 This writes `dataset_1000_radix_sorted_step_1_7.txt`, showing the selected records in `integer/string` format and every digit pass from `d=10` to `d=1`.
 
+## Heap Sort
+
+```powershell
+.\build\Debug\heap_sort.exe dataset_1000.csv
+```
+
+This builds a maxheap manually, sorts by the integer key, writes
+`heap_sorted_dataset_1000.csv`, and records the algorithm-only running time in
+both the terminal and output file.
+
+## Heap Sort Step
+
+```powershell
+.\build\Debug\heap_sort_step.exe dataset_1000.csv 1 7
+```
+
+This writes `dataset_1000_heap_sorted_step_1_7.txt`, showing the initial maxheap
+and each extraction step from `i = 6` through `i = 1`.
+
 See `TODO.md` for the full requirement and rubric checklist extracted from the assignment PDF.
 
 ## Suggested Folders
