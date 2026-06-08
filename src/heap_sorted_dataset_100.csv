@@ -1,7 +1,7 @@
 Algorithm: Heap Sort (maxheap)
 Input file: .\src\dataset_100.csv
 Number of records: 100
-Running time: 0.000080100 seconds
+Running time: 0.000125600 seconds
 8370911590/jixik
 8371911593/yrsws
 8372911596/lidvu
