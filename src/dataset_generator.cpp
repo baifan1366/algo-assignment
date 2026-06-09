@@ -12,6 +12,7 @@
 #include <random>
 #include <stdexcept>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace {
@@ -67,18 +68,25 @@ std::string random_lowercase_word(std::mt19937_64& generator) {
 
 std::vector<Record> generate_records(std::size_t size, std::uint64_t seed) {
     std::mt19937_64 generator(seed);
-    std::uniform_int_distribution<std::uint64_t> offset_distribution(0, kKeyRange - 1ULL);
-
-    // This multiplier is coprime with 9,000,000,000, so the formula below is
-    // a permutation of the full key range and cannot produce duplicate keys.
-    constexpr std::uint64_t permutation_multiplier = 1'000'003ULL;
-    const std::uint64_t offset = offset_distribution(generator);
+    
+    // For better distribution across the full key range, especially for small datasets,
+    // we sample randomly from the entire range using reservoir sampling approach.
+    std::uniform_int_distribution<std::uint64_t> key_distribution(kMinimumKey, kMaximumKey);
 
     std::vector<Record> records;
     records.reserve(size);
-    for (std::uint64_t i = 0; i < static_cast<std::uint64_t>(size); ++i) {
-        const std::uint64_t key = kMinimumKey + ((i * permutation_multiplier + offset) % kKeyRange);
-        records.push_back(Record{key, random_lowercase_word(generator)});
+    
+    // Use unordered_set for efficient duplicate checking
+    std::unordered_set<std::uint64_t> used_keys;
+    used_keys.reserve(size);
+    
+    while (records.size() < size) {
+        std::uint64_t key = key_distribution(generator);
+        
+        // Check if key is unique
+        if (used_keys.insert(key).second) {
+            records.push_back(Record{key, random_lowercase_word(generator)});
+        }
     }
 
     std::shuffle(records.begin(), records.end(), generator);
@@ -117,7 +125,7 @@ void write_generation_info(
     output << "Integer range: " << kMinimumKey << " to " << kMaximumKey << '\n';
     output << "String format: 5 lowercase alphabet letters\n";
     output << "Record format: integer,string\n";
-    output << "Duplicate prevention: permutation formula with multiplier 1000003\n";
+    output << "Duplicate prevention: uniform random sampling with hash set tracking\n";
     output << "Randomization: std::shuffle after record generation\n";
     output << std::fixed << std::setprecision(9);
     output << "Generation and randomization time: " << generation_seconds << " seconds\n";
