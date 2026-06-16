@@ -349,16 +349,25 @@ namespace
 
 int main(int argc, char *argv[])
 {
-    if (argc != 3)
+    if (argc != 2)
     {
-        print_usage(argv[0], "<dataset_n.csv> <target_integer>");
+        print_usage(argv[0], "<target_integer>");
         return 1;
     }
 
     try
     {
-        std::string input_path = argv[1];
-        std::uint64_t target = parse_target(argv[2]);
+        // std::string input_path = "../dataset_1000.csv";
+        // std::string input_path = "../dataset_5000.csv";
+        std::string input_path = "../dataset_10000.csv";
+        // std::string input_path = "../dataset_50000.csv";
+        // std::string input_path = "../dataset_100000.csv";
+        // std::string input_path = "../dataset_250000.csv";
+        // std::string input_path = "../dataset_500000.csv";
+        // std::string input_path = "../dataset_1000000.csv";
+        // std::string input_path = "../dataset_2500000.csv";
+        // std::string input_path = "../dataset_5000000.csv";
+        std::uint64_t target = parse_target(argv[1]);
 
         std::vector<Record> records = read_dataset_csv(input_path);
 
