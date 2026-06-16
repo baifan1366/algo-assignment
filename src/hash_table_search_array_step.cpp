@@ -41,7 +41,6 @@ namespace
         bool occupied = false;
         Record direct;
         int root = kNoNode;
-        std::vector<AvlNode> nodes;
     };
 
     int get_max(int first, int second)
@@ -170,7 +169,7 @@ namespace
         return key % table_size;
     }
 
-    int insert_into_hash_table(std::vector<Bucket> &hash_table, const Record &record)
+    int insert_into_hash_table(std::vector<Bucket> &hash_table, std::vector<AvlNode> &nodes, const Record &record)
     {
         int index = get_hash_index(record.key, hash_table.size());
 
@@ -181,13 +180,13 @@ namespace
         }
         else
         {
-            hash_table[index].root = insert_avl(hash_table[index].nodes, hash_table[index].root, record);
+            hash_table[index].root = insert_avl(nodes, hash_table[index].root, record);
         }
 
         return index;
     }
 
-    std::vector<Bucket> build_hash_table(const std::vector<Record> &records)
+    std::vector<Bucket> build_hash_table(const std::vector<Record> &records, std::vector<AvlNode> &nodes)
     {
         int table_size = static_cast<int>(records.size());
 
@@ -196,11 +195,13 @@ namespace
             table_size = 1;
         }
 
+        nodes.reserve(table_size);
+
         std::vector<Bucket> table(table_size);
 
         for (int i = 0; i < static_cast<int>(records.size()); i++)
         {
-            insert_into_hash_table(table, records[i]);
+            insert_into_hash_table(table, nodes, records[i]);
         }
 
         return table;
@@ -231,7 +232,7 @@ namespace
         }
     }
 
-    std::vector<std::string> get_search_path(const std::vector<Bucket> &table, std::uint64_t target)
+    std::vector<std::string> get_search_path(const std::vector<Bucket> &table, const std::vector<AvlNode> &nodes, std::uint64_t target)
     {
         std::vector<std::string> path;
 
@@ -251,7 +252,6 @@ namespace
 
         path.push_back(std::to_string(table[index].direct.key) + " != " + std::to_string(target));
 
-        const std::vector<AvlNode> &nodes = table[index].nodes;
         int current = table[index].root;
 
         while (current != kNoNode)
@@ -291,14 +291,14 @@ int main(int argc, char *argv[])
     {
         // std::string input_path = "../dataset_1000.csv";
         // std::string input_path = "../dataset_5000.csv";
-        std::string input_path = "../dataset_10000.csv";
+        // std::string input_path = "../dataset_10000.csv";
         // std::string input_path = "../dataset_50000.csv";
         // std::string input_path = "../dataset_100000.csv";
         // std::string input_path = "../dataset_250000.csv";
         // std::string input_path = "../dataset_500000.csv";
         // std::string input_path = "../dataset_1000000.csv";
         // std::string input_path = "../dataset_2500000.csv";
-        // std::string input_path = "../dataset_5000000.csv";
+        std::string input_path = "../dataset_5000000.csv";
 
         std::uint64_t target = parse_target(argv[1]);
         std::vector<Record> records = read_dataset_csv(input_path);
@@ -308,8 +308,9 @@ int main(int argc, char *argv[])
             throw std::runtime_error("Dataset is empty");
         }
 
-        std::vector<Bucket> table = build_hash_table(records);
-        std::vector<std::string> path = get_search_path(table, target);
+        std::vector<AvlNode> nodes;
+        std::vector<Bucket> table = build_hash_table(records, nodes);
+        std::vector<std::string> path = get_search_path(table, nodes, target);
         std::string output_path = make_step_output_filename(input_path, target);
 
         for (int i = 0; i < static_cast<int>(path.size()); i++)
