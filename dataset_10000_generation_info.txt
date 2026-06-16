@@ -1,0 +1,12 @@
+Program: dataset_generator
+Dataset file: dataset_10000.csv
+Number of records: 10000
+Seed used: 2531325572
+Integer range: 1000000000 to 9999999999
+String format: 5 lowercase alphabet letters
+Record format: integer,string
+Duplicate prevention: uniform random sampling with hash set tracking
+Randomization: std::shuffle after record generation
+Generation and randomization time: 0.001719500 seconds
+CSV writing time: 0.001544959 seconds
+Total program work time: 0.003264583 seconds

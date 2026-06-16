@@ -295,15 +295,15 @@ namespace
         output << "Worst case time: " << worst_time << " seconds\n";
     }
 
-    double measure_search_time(const std::vector<Bucket> &table, const std::vector<std::uint64_t> &targets)
+    double measure_repeated_key_search_time(const std::vector<Bucket> &table, std::uint64_t target, int repeat_count)
     {
         std::uint64_t checksum = 0;
 
         auto start_time = std::chrono::high_resolution_clock::now();
 
-        for (int i = 0; i < static_cast<int>(targets.size()); i++)
+        for (int i = 0; i < repeat_count; i++)
         {
-            SearchResult result = search_hash_table(table, targets[i]);
+            SearchResult result = search_hash_table(table, target);
 
             if (result.found == true)
             {
@@ -330,15 +330,18 @@ namespace
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2)
-    {
-        print_usage(argv[0], "<dataset_n.csv>");
-        return 1;
-    }
-
     try
     {
-        std::string input_path = argv[1];
+        // std::string input_path = "../dataset_1000.csv";
+        // std::string input_path = "../dataset_5000.csv";
+        std::string input_path = "../dataset_10000.csv";
+        // std::string input_path = "../dataset_50000.csv";
+        // std::string input_path = "../dataset_100000.csv";
+        // std::string input_path = "../dataset_250000.csv";
+        // std::string input_path = "../dataset_500000.csv";
+        // std::string input_path = "../dataset_1000000.csv";
+        // std::string input_path = "../dataset_2500000.csv";
+        // std::string input_path = "../dataset_5000000.csv";
 
         std::vector<Record> records = read_dataset_csv(input_path);
 
@@ -351,48 +354,35 @@ int main(int argc, char *argv[])
 
         std::cout << "Dataset loaded: " << records.size() << " records\n";
         std::cout << "Hash table built successfully\n";
-        std::vector<std::uint64_t> best_targets;
-        std::vector<std::uint64_t> average_targets;
-        std::vector<std::uint64_t> worst_targets;
 
-        best_targets.reserve(records.size());
-        average_targets.reserve(records.size());
-        worst_targets.reserve(records.size());
+        int repeat_count = static_cast<int>(records.size());
+        double best_time = 0.0;
+        double average_time = 0.0;
+        double worst_time = 0.0;
+        double total_time = 0.0;
 
-        std::uint64_t best_key = records[0].key;
-        std::uint64_t worst_key = records[0].key;
-
-        int best_comparisons = search_hash_table(table, best_key).comparisons;
-        int worst_comparisons = best_comparisons;
-
+        // Each key is searched n times, where n is the dataset size.
+        // Best case is the key with the shortest repeated-search time.
+        // Average case is the mean repeated-search time across all keys.
+        // Worst case is the key with the longest repeated-search time.
         for (int i = 0; i < static_cast<int>(records.size()); i++)
         {
-            SearchResult result = search_hash_table(table, records[i].key);
+            double current_time = measure_repeated_key_search_time(table, records[i].key, repeat_count);
 
-            if (result.comparisons < best_comparisons)
+            if (i == 0 || current_time < best_time)
             {
-                best_comparisons = result.comparisons;
-                best_key = records[i].key;
+                best_time = current_time;
             }
 
-            if (result.comparisons > worst_comparisons)
+            if (i == 0 || current_time > worst_time)
             {
-                worst_comparisons = result.comparisons;
-                worst_key = records[i].key;
+                worst_time = current_time;
             }
 
-            average_targets.push_back(records[i].key);
+            total_time = total_time + current_time;
         }
 
-        for (int i = 0; i < static_cast<int>(records.size()); i++)
-        {
-            best_targets.push_back(best_key);
-            worst_targets.push_back(worst_key);
-        }
-
-        double best_time = measure_search_time(table, best_targets);
-        double average_time = measure_search_time(table, average_targets);
-        double worst_time = measure_search_time(table, worst_targets);
+        average_time = total_time / static_cast<double>(records.size());
 
         std::cout << std::fixed << std::setprecision(9);
         std::cout << "Best case time: " << best_time << " seconds\n";
