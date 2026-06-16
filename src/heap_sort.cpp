@@ -97,14 +97,19 @@ void write_heap_output(
 }
 } // namespace
 
-int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        print_usage(argv[0], "<dataset_n.csv>");
-        return 1;
-    }
-
+int main() {
     try {
-        const std::string input_path = argv[1];
+        //const std::string input_path = "dataset_1000.csv";
+        // const std::string input_path = "dataset_5000.csv";
+        const std::string input_path = "dataset_10000.csv";
+        // const std::string input_path = "dataset_50000.csv";
+        // const std::string input_path = "dataset_100000.csv";
+        // const std::string input_path = "dataset_250000.csv";
+        // const std::string input_path = "dataset_500000.csv";
+        // const std::string input_path = "dataset_1000000.csv";
+        // const std::string input_path = "dataset_2500000.csv";
+        // const std::string input_path = "dataset_5000000.csv";
+
         auto records = read_dataset_csv(input_path);
 
         const auto start_time = std::chrono::high_resolution_clock::now();

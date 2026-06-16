@@ -138,15 +138,25 @@ void write_heap_steps(const std::string& output_path, std::vector<Record> select
 } // namespace
 
 int main(int argc, char* argv[]) {
-    if (argc != 4) {
-        print_usage(argv[0], "<dataset_n.csv> <start_row> <end_row>");
+    if (argc != 3) {
+        print_usage(argv[0], "<start_row> <end_row>");
         return 1;
     }
 
     try {
-        const std::string input_path = argv[1];
-        const auto start_row = parse_row_number(argv[2], "start_row");
-        const auto end_row = parse_row_number(argv[3], "end_row");
+        //const std::string input_path = "dataset_1000.csv";
+        // const std::string input_path = "dataset_5000.csv";
+        const std::string input_path = "dataset_10000.csv";
+        // const std::string input_path = "dataset_50000.csv";
+        // const std::string input_path = "dataset_100000.csv";
+        // const std::string input_path = "dataset_250000.csv";
+        // const std::string input_path = "dataset_500000.csv";
+        // const std::string input_path = "dataset_1000000.csv";
+        // const std::string input_path = "dataset_2500000.csv";
+        // const std::string input_path = "dataset_5000000.csv";
+
+        const auto start_row = parse_row_number(argv[1], "start_row");
+        const auto end_row = parse_row_number(argv[2], "end_row");
 
         const auto records = read_dataset_csv(input_path);
         const auto selected_records = select_rows(records, start_row, end_row);
