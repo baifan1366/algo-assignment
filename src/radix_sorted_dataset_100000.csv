@@ -1,7 +1,7 @@
 Algorithm: Radix Sort (rightmost digit first)
 Input file: ../dataset_100000.csv
 Number of records: 100000
-Running time: 0.012985250 seconds
+Running time: 0.044380200 seconds
 1000095054/fgowf
 1000151516/kgkgt
 1000269647/ypppc

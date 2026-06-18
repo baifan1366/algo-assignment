@@ -92,16 +92,16 @@ void write_radix_output(
 
 int main() {
     try {
-        // const std::string input_path = "../dataset_1000.csv";
-        // const std::string input_path = "../dataset_5000.csv";
-        // const std::string input_path = "../dataset_10000.csv";
-        // const std::string input_path = "../dataset_50000.csv";
-        // const std::string input_path = "../dataset_100000.csv";
-        // const std::string input_path = "../dataset_250000.csv";
-        // const std::string input_path = "../dataset_500000.csv";
-        // const std::string input_path = "../dataset_1000000.csv";
-        // const std::string input_path = "../dataset_2500000.csv";
-        const std::string input_path = "../dataset_5000000.csv";
+        const std::string input_path = "../dataset_1000.csv";
+        //const std::string input_path = "../dataset_5000.csv";
+        //const std::string input_path = "../dataset_10000.csv";
+        //const std::string input_path = "../dataset_50000.csv";
+        //const std::string input_path = "../dataset_100000.csv";
+         //const std::string input_path = "../dataset_250000.csv";
+         //const std::string input_path = "../dataset_500000.csv";
+         //const std::string input_path = "../dataset_1000000.csv";
+        //const std::string input_path = "../dataset_2500000.csv";
+        //const std::string input_path = "../dataset_5000000.csv";
 
         auto records = read_dataset_csv(input_path);
 
