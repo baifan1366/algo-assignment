@@ -280,7 +280,12 @@ namespace
         return "hash_table_search_dataset_" + dataset_size_from_filename(input_filename) + ".txt";
     }
 
-    void write_output_file(const std::string &output_path, double best_time, double average_time, double worst_time)
+    void write_output_file(
+        const std::string &output_path,
+        double best_time,
+        double average_time,
+        double worst_time,
+        double program_time)
     {
         std::ofstream output(output_path);
 
@@ -293,6 +298,7 @@ namespace
         output << "Best case time: " << best_time << " seconds\n";
         output << "Average case time: " << average_time << " seconds\n";
         output << "Worst case time: " << worst_time << " seconds\n";
+        output << "Total program runtime: " << program_time << " seconds\n";
     }
 
     double measure_repeated_key_search_time(const std::vector<Bucket> &table, std::uint64_t target, int repeat_count)
@@ -332,16 +338,19 @@ int main(int argc, char *argv[])
 {
     try
     {
+        auto program_start_time = std::chrono::high_resolution_clock::now();
+
         // std::string input_path = "../dataset_1000.csv";
         // std::string input_path = "../dataset_5000.csv";
         // std::string input_path = "../dataset_10000.csv";
         // std::string input_path = "../dataset_50000.csv";
         // std::string input_path = "../dataset_100000.csv";
-        std::string input_path = "../dataset_250000.csv";
-        // std::string input_path = "../dataset_500000.csv";
+        // std::string input_path = "../dataset_250000.csv";
+        std::string input_path = "../dataset_500000.csv";
         // std::string input_path = "../dataset_1000000.csv";
         // std::string input_path = "../dataset_2500000.csv";
         // std::string input_path = "../dataset_5000000.csv";
+        // std::string input_path = "../dataset_10000000.csv";
 
         std::vector<Record> records = read_dataset_csv(input_path);
 
@@ -384,13 +393,18 @@ int main(int argc, char *argv[])
 
         average_time = total_time / static_cast<double>(records.size());
 
+        auto program_end_time = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> program_elapsed = program_end_time - program_start_time;
+        double program_time = program_elapsed.count();
+
         std::cout << std::fixed << std::setprecision(9);
         std::cout << "Best case time: " << best_time << " seconds\n";
         std::cout << "Average case time: " << average_time << " seconds\n";
         std::cout << "Worst case time: " << worst_time << " seconds\n";
+        std::cout << "Total program runtime: " << program_time << " seconds\n";
 
         std::string output_path = make_output_filename(input_path);
-        write_output_file(output_path, best_time, average_time, worst_time);
+        write_output_file(output_path, best_time, average_time, worst_time, program_time);
 
         std::cout << "Output file: " << output_path << '\n';
     }

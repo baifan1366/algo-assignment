@@ -1,5 +1,5 @@
 // *********************************************************
-// Program: hash_table_search_array.cpp
+// Program: hash_table_search.cpp
 // Course: CCP6214 Algorithm Design and Analysis
 // Lecture Class: TC4L
 // Tutorial Class: T13L
@@ -17,38 +17,35 @@
 // *********************************************************
 
 #include "../include/common.hpp"
-#include <chrono>
 #include <cstdint>
+#include <iostream>
+#include <vector>
+#include <string>
 #include <fstream>
 #include <iomanip>
-#include <iostream>
 #include <stdexcept>
-#include <string>
-#include <vector>
+#include <chrono>
 
 namespace
 {
-    const int kNoNode = -1;
-
-    // One node inside the array-based AVL tree.
-    // Child links are array indexes instead of pointers.
+    // one item inside the AVL tree.
     struct AvlNode
     {
         Record record;
-        int left = kNoNode;
-        int right = kNoNode;
+        AvlNode *left = nullptr;
+        AvlNode *right = nullptr;
         int height = 1;
     };
 
-    // One hash table bucket. The first record is stored directly.
-    // Collision records are stored in an array-based AVL tree.
+    // one slot in the hash table, which may contain multiple records due to collisions.
     struct Bucket
     {
         bool occupied = false;
         Record direct;
-        int root = kNoNode;
+        AvlNode *collision_root = nullptr;
     };
 
+    // the result of searching for a target integer in the hash table.
     struct SearchResult
     {
         bool found = false;
@@ -56,152 +53,152 @@ namespace
         int comparisons = 0;
     };
 
-    int get_max(int first, int second)
+    int get_height(AvlNode *node)
     {
-        if (first > second)
-        {
-            return first;
-        }
-
-        return second;
-    }
-
-    int get_height(const std::vector<AvlNode> &nodes, int index)
-    {
-        if (index == kNoNode)
+        if (node == nullptr)
         {
             return 0;
         }
 
-        return nodes[index].height;
+        return node->height;
     }
 
-    int get_balance(const std::vector<AvlNode> &nodes, int index)
+    int get_balance(AvlNode *node)
     {
-        if (index == kNoNode)
+        if (node == nullptr)
         {
             return 0;
         }
 
-        return get_height(nodes, nodes[index].left) - get_height(nodes, nodes[index].right);
+        return get_height(node->left) - get_height(node->right);
     }
 
-    void update_height(std::vector<AvlNode> &nodes, int index)
+    int get_max(int a, int b)
     {
-        nodes[index].height = 1 + get_max(get_height(nodes, nodes[index].left), get_height(nodes, nodes[index].right));
-    }
-
-    int create_node(std::vector<AvlNode> &nodes, const Record &record)
-    {
-        AvlNode node;
-        node.record = record;
-        nodes.push_back(node);
-        return static_cast<int>(nodes.size()) - 1;
-    }
-
-    int right_rotate(std::vector<AvlNode> &nodes, int root)
-    {
-        int new_root = nodes[root].left;
-        int moved_subtree = nodes[new_root].right;
-
-        nodes[new_root].right = root;
-        nodes[root].left = moved_subtree;
-
-        update_height(nodes, root);
-        update_height(nodes, new_root);
-
-        return new_root;
-    }
-
-    int left_rotate(std::vector<AvlNode> &nodes, int root)
-    {
-        int new_root = nodes[root].right;
-        int moved_subtree = nodes[new_root].left;
-
-        nodes[new_root].left = root;
-        nodes[root].right = moved_subtree;
-
-        update_height(nodes, root);
-        update_height(nodes, new_root);
-
-        return new_root;
-    }
-
-    int insert_avl(std::vector<AvlNode> &nodes, int root, const Record &record)
-    {
-        if (root == kNoNode)
+        if (a > b)
         {
-            return create_node(nodes, record);
-        }
-
-        if (record.key < nodes[root].record.key)
-        {
-            nodes[root].left = insert_avl(nodes, nodes[root].left, record);
-        }
-        else if (record.key > nodes[root].record.key)
-        {
-            nodes[root].right = insert_avl(nodes, nodes[root].right, record);
+            return a;
         }
         else
         {
-            nodes[root].record = record;
-            return root;
+            return b;
         }
-
-        update_height(nodes, root);
-
-        int balance = get_balance(nodes, root);
-
-        if (balance > 1 && record.key < nodes[nodes[root].left].record.key)
-        {
-            return right_rotate(nodes, root);
-        }
-
-        if (balance < -1 && record.key > nodes[nodes[root].right].record.key)
-        {
-            return left_rotate(nodes, root);
-        }
-
-        if (balance > 1 && record.key > nodes[nodes[root].left].record.key)
-        {
-            nodes[root].left = left_rotate(nodes, nodes[root].left);
-            return right_rotate(nodes, root);
-        }
-
-        if (balance < -1 && record.key < nodes[nodes[root].right].record.key)
-        {
-            nodes[root].right = right_rotate(nodes, nodes[root].right);
-            return left_rotate(nodes, root);
-        }
-
-        return root;
     }
 
-    SearchResult search_avl(const std::vector<AvlNode> &nodes, int root, std::uint64_t target, int comparisons_so_far)
+    AvlNode *right_rotate(AvlNode *root)
     {
-        int current = root;
+        AvlNode *new_root = root->left;
+        AvlNode *moved_subtree = new_root->right;
+
+        // Perform rotation
+        new_root->right = root;
+        root->left = moved_subtree;
+
+        // Update heights
+        root->height = 1 + get_max(get_height(root->left), get_height(root->right));
+        new_root->height = 1 + get_max(get_height(new_root->left), get_height(new_root->right));
+
+        // Return new root
+        return new_root;
+    }
+
+    AvlNode *left_rotate(AvlNode *root)
+    {
+        AvlNode *new_root = root->right;
+        AvlNode *moved_subtree = new_root->left;
+
+        // Perform rotation
+        new_root->left = root;
+        root->right = moved_subtree;
+
+        // Update heights
+        root->height = 1 + get_max(get_height(root->left), get_height(root->right));
+        new_root->height = 1 + get_max(get_height(new_root->left), get_height(new_root->right));
+
+        // Return new root
+        return new_root;
+    }
+
+    AvlNode *insert_avl(AvlNode *node, const Record &record)
+    {
+        if (node == nullptr)
+        {
+            AvlNode *new_node = new AvlNode;
+            new_node->record = record;
+            new_node->left = nullptr;
+            new_node->right = nullptr;
+            new_node->height = 1;
+            return new_node;
+        }
+
+        if (record.key < node->record.key)
+        {
+            node->left = insert_avl(node->left, record);
+        }
+        else if (record.key > node->record.key)
+        {
+            node->right = insert_avl(node->right, record);
+        }
+        else
+        {
+            node->record = record;
+            return node;
+        }
+
+        node->height = 1 + get_max(get_height(node->left), get_height(node->right));
+
+        int balance = get_balance(node);
+
+        if (balance > 1 && record.key < node->left->record.key)
+        {
+            return right_rotate(node);
+        }
+
+        if (balance < -1 && record.key > node->right->record.key)
+        {
+            return left_rotate(node);
+        }
+
+        if (balance > 1 && record.key > node->left->record.key)
+        {
+            node->left = left_rotate(node->left);
+            return right_rotate(node);
+        }
+
+        if (balance < -1 && record.key < node->right->record.key)
+        {
+            node->right = right_rotate(node->right);
+            return left_rotate(node);
+        }
+
+        return node;
+    }
+
+    SearchResult search_avl(AvlNode *node, std::uint64_t target, int comparisons_so_far)
+    {
+        AvlNode *current = node;
         int comparisons = comparisons_so_far;
 
-        while (current != kNoNode)
+        while (current != nullptr)
         {
             comparisons++;
 
-            if (target == nodes[current].record.key)
+            if (target == current->record.key)
             {
                 SearchResult result;
                 result.found = true;
-                result.record = &nodes[current].record;
+                result.record = &current->record;
                 result.comparisons = comparisons;
                 return result;
             }
 
-            if (target < nodes[current].record.key)
+            if (target < current->record.key)
             {
-                current = nodes[current].left;
+                current = current->left;
             }
             else
             {
-                current = nodes[current].right;
+                current = current->right;
             }
         }
 
@@ -217,9 +214,9 @@ namespace
         return key % table_size;
     }
 
-    int insert_into_hash_table(std::vector<Bucket> &hash_table, std::vector<AvlNode> &nodes, const Record &record)
+    int insert_into_hash_table(std::vector<Bucket> &hash_table, const Record &record)
     {
-        int index = get_hash_index(record.key, hash_table.size());
+        int index = get_hash_index(record.key, static_cast<int>(hash_table.size()));
 
         if (hash_table[index].occupied == false)
         {
@@ -228,15 +225,14 @@ namespace
         }
         else
         {
-            hash_table[index].root = insert_avl(nodes, hash_table[index].root, record);
+            hash_table[index].collision_root = insert_avl(hash_table[index].collision_root, record);
         }
-
         return index;
     }
 
-    SearchResult search_hash_table(const std::vector<Bucket> &hash_table, const std::vector<AvlNode> &nodes, std::uint64_t target)
+    SearchResult search_hash_table(const std::vector<Bucket> &hash_table, std::uint64_t target)
     {
-        int index = get_hash_index(target, hash_table.size());
+        int index = get_hash_index(target, static_cast<int>(hash_table.size()));
 
         SearchResult result;
 
@@ -257,10 +253,10 @@ namespace
             return result;
         }
 
-        return search_avl(nodes, hash_table[index].root, target, result.comparisons);
+        return search_avl(hash_table[index].collision_root, target, result.comparisons);
     }
 
-    std::vector<Bucket> build_hash_table(const std::vector<Record> &records, std::vector<AvlNode> &nodes)
+    std::vector<Bucket> build_hash_table(const std::vector<Record> &records)
     {
         int table_size = static_cast<int>(records.size());
 
@@ -269,13 +265,11 @@ namespace
             table_size = 1;
         }
 
-        nodes.reserve(table_size);
-
         std::vector<Bucket> table(table_size);
 
         for (int i = 0; i < static_cast<int>(records.size()); i++)
         {
-            insert_into_hash_table(table, nodes, records[i]);
+            insert_into_hash_table(table, records[i]);
         }
 
         return table;
@@ -283,7 +277,7 @@ namespace
 
     std::string make_output_filename(const std::string &input_filename)
     {
-        return "hash_table_search_array_dataset_" + dataset_size_from_filename(input_filename) + ".txt";
+        return "hash_table_search_dataset_" + dataset_size_from_filename(input_filename) + ".txt";
     }
 
     void write_output_file(
@@ -307,7 +301,7 @@ namespace
         output << "Total program runtime: " << program_time << " seconds\n";
     }
 
-    double measure_repeated_key_search_time(const std::vector<Bucket> &table, const std::vector<AvlNode> &nodes, std::uint64_t target, int repeat_count)
+    double measure_repeated_key_search_time(const std::vector<Bucket> &table, std::uint64_t target, int repeat_count)
     {
         std::uint64_t checksum = 0;
 
@@ -315,7 +309,7 @@ namespace
 
         for (int i = 0; i < repeat_count; i++)
         {
-            SearchResult result = search_hash_table(table, nodes, target);
+            SearchResult result = search_hash_table(table, target);
 
             if (result.found == true)
             {
@@ -340,7 +334,7 @@ namespace
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     try
     {
@@ -351,12 +345,11 @@ int main()
         // std::string input_path = "../dataset_10000.csv";
         // std::string input_path = "../dataset_50000.csv";
         // std::string input_path = "../dataset_100000.csv";
-        std::string input_path = "../dataset_250000.csv";
+        std::string input_path = "../dataset_500000.csv";
         // std::string input_path = "../dataset_500000.csv";
         // std::string input_path = "../dataset_1000000.csv";
         // std::string input_path = "../dataset_2500000.csv";
         // std::string input_path = "../dataset_5000000.csv";
-        // std::string input_path = "../dataset_10000000.csv";
 
         std::vector<Record> records = read_dataset_csv(input_path);
 
@@ -365,11 +358,10 @@ int main()
             throw std::runtime_error("Dataset is empty");
         }
 
-        std::vector<AvlNode> nodes;
-        std::vector<Bucket> table = build_hash_table(records, nodes);
+        std::vector<Bucket> table = build_hash_table(records);
 
         std::cout << "Dataset loaded: " << records.size() << " records\n";
-        std::cout << "Array-based hash table built successfully\n";
+        std::cout << "Hash table built successfully\n";
 
         int repeat_count = static_cast<int>(records.size());
         double best_time = 0.0;
@@ -383,7 +375,7 @@ int main()
         // Worst case is the key with the longest repeated-search time.
         for (int i = 0; i < static_cast<int>(records.size()); i++)
         {
-            double current_time = measure_repeated_key_search_time(table, nodes, records[i].key, repeat_count);
+            double current_time = measure_repeated_key_search_time(table, records[i].key, repeat_count);
 
             if (i == 0 || current_time < best_time)
             {
@@ -417,7 +409,7 @@ int main()
     }
     catch (const std::exception &error)
     {
-        std::cerr << "hash_table_search_array error: " << error.what() << '\n';
+        std::cerr << "hash_table_search error: " << error.what() << '\n';
         return 1;
     }
 
