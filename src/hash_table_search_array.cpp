@@ -343,8 +343,8 @@ int main()
         // std::string input_path = "../dataset_10000.csv";
         // std::string input_path = "../dataset_50000.csv";
         // std::string input_path = "../dataset_100000.csv";
-        // std::string input_path = "../dataset_250000.csv";
-        std::string input_path = "../dataset_500000.csv";
+        std::string input_path = "../dataset_250000.csv";
+        // std::string input_path = "../dataset_500000.csv";
         // std::string input_path = "../dataset_1000000.csv";
         // std::string input_path = "../dataset_2500000.csv";
         // std::string input_path = "../dataset_5000000.csv";
